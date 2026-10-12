@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-matcher"
+version = "0.1.0"
+description = "A leader agent and three sub-agents (research, role verification, alignment) wired as a LangGraph loop to find one job posting that is both wanted and attainable."
+requires-python = ">=3.10"
+dependencies = [
+  "anthropic>=1.13,<2",
+  "langgraph>=1.2,<2",
+  "pydantic>=2.8",
+  "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+matcher = "matcher.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+markers = ["live: calls a real model (costs money / plan usage); run with -m live"]
+addopts = "-m 'not live'"

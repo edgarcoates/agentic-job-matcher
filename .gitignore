@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+runs/*
+!runs/.gitkeep
+!runs/practice-example/
+!runs/live-example/
+*.egg-info/

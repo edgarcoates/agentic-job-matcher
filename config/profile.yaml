@@ -1,0 +1,43 @@
+# Candidate profile: what the candidate can GET. A short summary of the CV.
+# This public copy is anonymised: employers and institutions are pseudonyms (e.g. "VenueCo" = an electronic
+# fixed-income trading venue). The structure is what the agents read; swap in your own details to reuse it.
+name: Candidate A
+graduation: 2027-06
+citizenship: [US, UK]            # no sponsorship needed in either country
+preferred_locations: [London, New York]
+max_years_experience: 0          # graduate / entry-level only
+
+education:
+  - BSc International Economics & Finance, a leading European university (First-class equivalent); exchange semester at a US university
+  - A-levels in Mathematics, Further Mathematics, Economics and Physics (top grades)
+
+skills:
+  - id: markets_structure
+    claim: Electronic fixed-income market structure (ADV, electronification, D2C/D2D share, fee capture)
+    evidence: VenueCo CFO Group internship (NY, 2026); built a US Treasury revenue forecast
+  - id: applied_llm
+    claim: Building applied LLM tools (retrieval-grounded prompting, context engineering, back-testing)
+    evidence: VenueCo 2026, LLM tools for earnings-call themes, reconciliations, variance analysis and KYC
+  - id: portfolio_mgmt
+    claim: Portfolio construction, rebalancing and risk controls (simulated)
+    evidence: Head of Portfolio Management at a student investment society (multi-million simulated portfolio)
+  - id: valuation
+    claim: DCF and multiples valuation; equity pitches
+    evidence: EM hedge fund placement; student investment society pitches
+  - id: fx_rates_markets
+    claim: Exposure to FX/rates trading strategy analysis
+    evidence: Bank Global Markets insight placement (1 week)
+  - id: client_materials
+    claim: Client-facing product and pitch materials
+    evidence: VenueCo 2025 (execution-product pitch deck, product overview used with a large insurer)
+  - id: excel_vba
+    claim: Excel/VBA; Bloomberg (BMC, BSA, BFF)
+    evidence: Fixed live client VBA code at VenueCo 2025; certificates
+  - id: quant_foundations
+    claim: Strong maths foundations (top A-level grades, national maths olympiad awards)
+    evidence: School record; university Mathematics module near top mark
+
+known_gaps:                      # stated honestly so the attainability agent can use them
+  - Python, SQL and Git are still being built to working fluency (no shipped production code yet)
+  - No C++ or formal quant research experience
+  - Student fund performance is simulated, not professional track record

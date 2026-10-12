@@ -1,0 +1,30 @@
+# Market thesis: the assumption set that decides whether a role is *wanted*.
+# Summarised from the career-direction memo.
+statement: >
+  AI is compressing junior structured knowledge work. Career capital now compounds in seats that give
+  repeated decisions, systems knowledge of how markets work, technical leverage, trusted relationships
+  and a path to ownership. Financial-market infrastructure, e-trading and strong bank Markets seats
+  are the best entry point.
+
+preferred_lanes:
+  - Financial-market infrastructure / electronic markets / market structure
+  - Bank Markets seats in rates, FX, credit, e-trading or strats
+  - Discretionary catalyst investing (special situations, event-driven, macro)
+  - Digital / power infrastructure principal investing (selective)
+
+excluded_lanes:                  # lanes the memo explicitly cuts
+  - Private banking / UHNW advisory
+  - Generalist private equity as an identity
+  - Private credit as a cycle bet
+  - Benchmarked long-only asset management
+  - Conventional IB (except restructuring), consulting, generic corporate finance
+
+# Six-factor rubric, each scored 0-5. Accept threshold 22/30.
+rubric:
+  decision_rights: Does the junior make or directly inform decisions with feedback (not just produce analysis)?
+  learning_density: How fast does the seat build market/systems knowledge?
+  ai_complementarity: Does AI make this person more valuable here, not replace the work?
+  relationship_capital: Does the seat build trust with clients, counterparties and senior people?
+  ownership_path: Is there a credible path to P&L, carry, equity or product ownership?
+  us_portability: Does the skill set transfer to a New York seat later?
+accept_threshold: 22

@@ -4,7 +4,11 @@
 name: Candidate A
 graduation: 2027-06
 citizenship: [US, UK]            # no sponsorship needed in either country
-preferred_locations: [London, New York]
+home_location: London            # the search is London-first
+secondary_locations:              # major US cities, considered at a higher bar (see thesis preferences)
+  eastern_time: [New York, NYC, Manhattan, Jersey City, Stamford, Greenwich, Boston, Philadelphia, Washington, Charlotte, Miami, Atlanta]
+  other: [Chicago, San Francisco, Los Angeles, Seattle, Austin, Dallas, Houston, Denver]
+availability_from: 2027-07       # after graduating in June 2027; earlier starts would delay graduation
 max_years_experience: 0          # graduate / entry-level only
 
 education:
@@ -36,6 +40,22 @@ skills:
   - id: quant_foundations
     claim: Strong maths foundations (top A-level grades, national maths olympiad awards)
     evidence: School record; university Mathematics module near top mark
+
+# What sets the candidate apart from a typical graduate applicant. The alignment agent checks how much each
+# role rewards these; roles that do rank higher, because that is where the candidate is most competitive.
+edges:
+  - id: market_structure_insider
+    claim: Inside view of how an electronic trading venue earns money (ADV, electronification, D2C/D2D share, fee capture)
+    evidence: VenueCo CFO Group internship (NY, 2026); US Treasury revenue forecast presented to the head of investor relations
+  - id: applied_ai_builder
+    claim: Builds working LLM tools that automate finance workflows, and can explain the method to senior people
+    evidence: VenueCo 2026 tools for earnings-call themes, reconciliations, variance analysis and KYC; presented to senior finance leadership
+  - id: cross_border
+    claim: US-UK dual citizen with a European university network; no visa sponsorship needed in London or New York
+    evidence: Citizenship; European degree; US exchange semester; internships in London, Europe and New York
+  - id: portfolio_leadership
+    claim: Has led portfolio construction and trained other analysts
+    evidence: Head of Portfolio Management at a student investment society, leading a ten-analyst team; built its training scheme
 
 known_gaps:                      # stated honestly so the attainability agent can use them
   - Python, SQL and Git are still being built to working fluency (no shipped production code yet)

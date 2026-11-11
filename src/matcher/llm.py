@@ -36,9 +36,33 @@ PRICES = {
 }
 
 
-def estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
+# Server-side web search is billed per search on top of tokens ($10 per 1,000); web fetch is billed as tokens only.
+WEB_SEARCH_USD = 10.00 / 1000
+
+# Defaults for live research, overridable from settings.yaml (`web:`).
+WEB_DEFAULTS = {"tool_version": "basic", "max_searches": 8, "max_fetches": 6, "max_fetch_tokens": 8000}
+
+# "basic": one search per tool call (web_search_20250305 / web_fetch_20250910). Predictable and countable.
+# "dynamic": the 20260209 versions, where the model writes code that runs searches and filters results. In live runs
+# that layer failed with code errors and used up a lane's whole search allowance in one go, so basic is the default.
+WEB_TOOL_TYPES = {"basic": ("web_search_20250305", "web_fetch_20250910"),
+                  "dynamic": ("web_search_20260209", "web_fetch_20260209")}
+
+
+def tool_errors(content) -> list[str]:
+    """Server-tool errors don't raise: they come back as result blocks whose content is an error object."""
+    errors = []
+    for block in content:
+        if getattr(block, "type", "") in ("web_search_tool_result", "web_fetch_tool_result"):
+            code = getattr(getattr(block, "content", None), "error_code", None)
+            if code:
+                errors.append(f"{block.type.split('_tool')[0]}:{code}")
+    return errors
+
+
+def estimate_cost(model: str, input_tokens: int, output_tokens: int, web_searches: int = 0) -> float:
     price_in, price_out = PRICES.get(model, (0.0, 0.0))
-    return (input_tokens * price_in + output_tokens * price_out) / 1_000_000
+    return (input_tokens * price_in + output_tokens * price_out) / 1_000_000 + web_searches * WEB_SEARCH_USD
 
 
 class LLMError(RuntimeError):
@@ -51,6 +75,8 @@ class CallResult:
     input_tokens: int = 0
     output_tokens: int = 0
     cost_usd: float = 0.0
+    web_searches: int = 0
+    tool_errors: list[str] | None = None
 
 
 class ApiBackend:
@@ -62,7 +88,8 @@ class ApiBackend:
         if not os.environ.get("ANTHROPIC_API_KEY"):
             raise LLMError("ANTHROPIC_API_KEY is not set. Copy .env.example to .env, or use backend: claude_cli.")
         self._anthropic = anthropic
-        self.client = anthropic.Anthropic()
+        # Retry dropped connections and overloads a few more times than the SDK default (2) before giving up.
+        self.client = anthropic.Anthropic(max_retries=5)
 
     def structured(self, model: str, system: str, prompt: str, schema: type[T]) -> tuple[T, CallResult]:
         response = self.client.messages.parse(
@@ -84,13 +111,18 @@ class ApiBackend:
             cost_usd=estimate_cost(model, usage.input_tokens, usage.output_tokens),
         )
 
-    def research(self, model: str, system: str, prompt: str) -> CallResult:
+    def research(self, model: str, system: str, prompt: str, web: dict | None = None) -> CallResult:
+        web = {**WEB_DEFAULTS, **(web or {})}
         messages = [{"role": "user", "content": prompt}]
+        search_type, fetch_type = WEB_TOOL_TYPES[web.get("tool_version", "basic")]
         tools = [
-            {"type": "web_search_20260209", "name": "web_search", "max_uses": 5},
-            {"type": "web_fetch_20260209", "name": "web_fetch", "max_uses": 3},  # read the posting page itself
+            {"type": search_type, "name": "web_search", "max_uses": web["max_searches"]},
+            # Read the posting page itself, but cap how much of each page enters context (pages are the main cost).
+            {"type": fetch_type, "name": "web_fetch", "max_uses": web["max_fetches"],
+             "max_content_tokens": web["max_fetch_tokens"]},
         ]
-        total_in = total_out = 0
+        total_in = total_out = searches = 0
+        errors: list[str] = []
         # Server-side tools run on Anthropic's side; a long search turn can pause and must be resumed.
         for _ in range(5):
             response = self.client.messages.create(
@@ -98,13 +130,16 @@ class ApiBackend:
             )
             total_in += response.usage.input_tokens
             total_out += response.usage.output_tokens
+            server = getattr(response.usage, "server_tool_use", None)
+            searches += int(getattr(server, "web_search_requests", 0) or 0)
+            errors += tool_errors(response.content)
             if response.stop_reason == "refusal":
                 raise LLMError(f"{model} declined the research request: {response.stop_details}")
             if response.stop_reason != "pause_turn":
                 break
             messages.append({"role": "assistant", "content": response.content})
         text = "\n".join(b.text for b in response.content if b.type == "text")
-        return CallResult(text, total_in, total_out, estimate_cost(model, total_in, total_out))
+        return CallResult(text, total_in, total_out, estimate_cost(model, total_in, total_out, searches), searches, errors)
 
 
 class ClaudeCliBackend:
@@ -140,11 +175,13 @@ class ClaudeCliBackend:
     @staticmethod
     def _usage(payload: dict) -> CallResult:
         usage = payload.get("usage") or {}
+        server = usage.get("server_tool_use") or {}
         return CallResult(
             text=payload.get("result") or "",
             input_tokens=sum(int(usage.get(k) or 0) for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")),
             output_tokens=int(usage.get("output_tokens") or 0),
             cost_usd=float(payload.get("total_cost_usd") or 0.0),  # notional on a subscription plan
+            web_searches=int(server.get("web_search_requests") or 0),
         )
 
     def structured(self, model: str, system: str, prompt: str, schema: type[T]) -> tuple[T, CallResult]:
@@ -165,7 +202,8 @@ class ClaudeCliBackend:
         result.text = parsed.model_dump_json()
         return parsed, result
 
-    def research(self, model: str, system: str, prompt: str) -> CallResult:
+    def research(self, model: str, system: str, prompt: str, web: dict | None = None) -> CallResult:
+        # The CLI manages its own web tool limits; `web` applies to the API backend only.
         payload = self._run(model, system, prompt, ["--tools", "WebSearch,WebFetch", "--allowedTools", "WebSearch,WebFetch"])
         return self._usage(payload)
 
@@ -183,11 +221,12 @@ class LLM:
         self.tracer.llm_call(agent, model, schema.__name__, result, time.monotonic() - start)
         return parsed
 
-    def research(self, agent: str, model: str, system: str, prompt: str) -> str:
+    def research(self, agent: str, model: str, system: str, prompt: str, web: dict | None = None) -> CallResult:
+        """Web research call. Returns the full result (text, searches, and any web-tool error codes)."""
         start = time.monotonic()
-        result = self.backend.research(model, system, prompt)
+        result = self.backend.research(model, system, prompt, web)
         self.tracer.llm_call(agent, model, "web_research", result, time.monotonic() - start)
-        return result.text
+        return result
 
 
 def make_backend(name: str) -> ApiBackend | ClaudeCliBackend:

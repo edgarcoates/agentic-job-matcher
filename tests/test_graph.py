@@ -1,70 +1,107 @@
-"""Graph structure and routing logic. Routing is plain Python on state, so it is tested directly."""
+"""Graph structure, routing and search policy. Routing is plain Python on state, so it is tested directly."""
 
-from matcher.graph import build_graph, pick_final, route_after_research, route_after_review, route_after_verify
-from matcher.schemas import Check, Decision, VerificationResult
+from matcher.agents.leader import choose_lanes
+from matcher.agents.research import is_duplicate
+from matcher.graph import (
+    build_graph,
+    include_off_cycle,
+    interleave_by_lane,
+    pick_final,
+    route_after_decision,
+    route_after_next,
+    route_after_verify,
+)
+from matcher.schemas import Check, Decision, LanePlan, VerificationResult
+
+from .conftest import make_posting
 
 
-def decision(verdict: str, desirability: int = 20, attain: int = 60, i: int = 1) -> Decision:
+def decision(verdict: str, rank: float = 20, i: int = 1, role_type: str = "full_time", tier: str = "strong") -> Decision:
     ok = verdict == "accept"
     return Decision(
         iteration=i, posting_id=f"p{i}", title="t", employer="e", verdict=verdict,
         gates={"verified": ok, "wanted": ok, "attainable": ok}, rationale="", feedback="",
-        desirability=desirability, attainability_pct=attain,
+        role_type=role_type, tier=tier, desirability=int(rank), attainability_pct=60, rank_score=rank,
     )
 
 
-def test_graph_has_leader_and_three_subagent_nodes():
+def test_graph_has_leader_subagents_fan_out_and_code_reject():
     nodes = set(build_graph(None).get_graph().nodes)
-    assert {"plan", "research", "verify", "align", "review", "finalize"} <= nodes
+    assert {"plan", "next", "dispatch", "search_lane", "gather", "verify", "align", "review", "reject", "finalize"} <= nodes
 
 
-def test_failed_verification_skips_alignment():
+def test_ineligible_roles_go_to_code_rejection_not_the_leader():
     failed = VerificationResult(passed=False, checks=[Check(name="still_open", passed=False, evidence="", source="rule")])
-    assert route_after_verify({"verification": failed}) == "review"
+    assert route_after_verify({"verification": failed}) == "reject"
     assert route_after_verify({"verification": VerificationResult(passed=True, checks=[])}) == "align"
 
 
-def test_research_with_nothing_left_finalizes():
-    assert route_after_research({"current": None, "exhausted": True, "iteration": 1}, max_iterations=4) == "finalize"
+def test_empty_queue_triggers_a_search_round_while_rounds_remain():
+    assert route_after_next({"iteration": 0, "search_rounds": 0}, 16, 2, files_mode=False) == "dispatch"
+    assert route_after_next({"iteration": 3, "search_rounds": 2}, 16, 2, files_mode=False) == "finalize"
 
 
-def test_empty_live_search_retries_within_budget():
-    assert route_after_research({"current": None, "iteration": 2}, max_iterations=4) == "research"
-    assert route_after_research({"current": None, "iteration": 4}, max_iterations=4) == "finalize"
+def test_no_new_search_once_a_full_time_strong_match_is_accepted():
+    state = {"iteration": 2, "search_rounds": 1, "decisions": [decision("accept")]}
+    assert route_after_next(state, 16, 2, files_mode=False) == "finalize"
+    state["decisions"] = [decision("accept", tier="worth_applying")]
+    assert route_after_next(state, 16, 2, files_mode=False) == "dispatch"
 
 
-def test_loop_continues_until_min_reviews_even_after_accept():
-    state = {"iteration": 1, "decisions": [decision("accept")]}
-    assert route_after_review(state, max_iterations=4, min_reviews=3) == "research"
+def test_files_mode_never_searches_the_web():
+    assert route_after_next({"iteration": 0, "search_rounds": 0}, 16, 2, files_mode=True) == "finalize"
 
 
-def test_loop_stops_at_iteration_budget_without_accept():
-    state = {"iteration": 4, "decisions": [decision("reject", i=n) for n in range(4)]}
-    assert route_after_review(state, max_iterations=4, min_reviews=3) == "finalize"
-
-
-def test_loop_stops_once_accept_and_min_reviews_met():
+def test_loop_stops_on_full_time_strong_match_once_min_reviews_met():
     state = {"iteration": 3, "decisions": [decision("reject", i=1), decision("reject", i=2), decision("accept", i=3)]}
-    assert route_after_review(state, max_iterations=4, min_reviews=3) == "finalize"
+    assert route_after_decision(state, max_iterations=16, min_reviews=3) == "finalize"
 
 
-def test_final_pick_prefers_higher_desirability_among_accepts():
-    best = decision("accept", desirability=26, i=2)
-    picked = pick_final([decision("accept", desirability=23, i=1), best, decision("reject", desirability=30, i=3)])
-    assert picked == best
+def test_worth_applying_or_internship_accepts_keep_the_search_going():
+    worth = {"iteration": 3, "decisions": [decision("reject", i=1), decision("reject", i=2),
+                                           decision("accept", i=3, tier="worth_applying")]}
+    assert route_after_decision(worth, max_iterations=16, min_reviews=3) == "next"
+    intern = {"iteration": 3, "decisions": [decision("reject", i=1), decision("reject", i=2),
+                                            decision("accept", i=3, role_type="off_cycle_internship")]}
+    assert route_after_decision(intern, max_iterations=16, min_reviews=3) == "next"
 
 
-def test_live_duplicates_are_caught_despite_different_employer_wording():
-    from matcher.agents.research import is_duplicate
-    from matcher.schemas import JobPosting
+def test_loop_stops_at_review_budget():
+    state = {"iteration": 16, "decisions": [decision("reject", i=n) for n in range(16)]}
+    assert route_after_decision(state, max_iterations=16, min_reviews=3) == "finalize"
 
+
+def test_off_cycle_search_opens_only_from_round_two_and_only_without_a_full_time_accept():
+    assert include_off_cycle(1, []) is False
+    assert include_off_cycle(2, []) is True
+    assert include_off_cycle(2, [decision("accept", tier="worth_applying")]) is False
+    assert include_off_cycle(2, [decision("accept", role_type="off_cycle_internship")]) is True
+
+
+def test_final_pick_order_full_time_then_strong_then_rank():
+    full_strong = decision("accept", rank=20, i=1)
+    full_worth = decision("accept", rank=27, i=2, tier="worth_applying")
+    intern = decision("accept", rank=29, i=3, role_type="off_cycle_internship")
+    assert pick_final([intern, full_worth, full_strong]) == full_strong
+    assert pick_final([intern, full_worth]) == full_worth
+    assert pick_final([decision("reject", i=4), intern]) == intern
+
+
+def test_queue_alternates_between_lanes():
+    items = [{"lane": "a", "n": 1}, {"lane": "a", "n": 2}, {"lane": "b", "n": 3}, {"lane": "c", "n": 4}]
+    assert [i["n"] for i in interleave_by_lane(items)] == [1, 3, 4, 2]
+
+
+def test_lane_choice_keeps_real_ids_and_fills_with_least_recently_searched():
+    plan = lambda lane_id: LanePlan(lane_id=lane_id, rationale="", target_roles=[], target_employers=[], search_queries=[])  # noqa: E731
+    lanes = ["a", "b", "c", "d", "e"]
+    chosen = choose_lanes([plan("b"), plan("made_up"), plan("b")], lanes, {"a": "2026-11-01", "c": "2026-10-01"}, 3)
+    assert [c.lane_id for c in chosen] == ["b", "d", "e"]  # never-searched lanes fill first
+
+
+def test_duplicates_need_same_employer_or_url():
     seen = ["BNP Paribas (CIB, Global Markets) | London - 2027 Global Markets Graduate Analyst - Trading",
             "https://example.com/bnp/107441"]
-    def p(title, url=None):
-        return JobPosting(is_specific_posting=True, source_id="", title=title, employer="BNP Paribas", location="London",
-                          url=url, employment_type=None, application_route=None, closing_date=None,
-                          min_years_experience=None, graduation_years_eligible=[], responsibilities=[],
-                          requirements=[], summary="")
-    assert is_duplicate(p("London - 2027 Global Markets Graduate Analyst - Trading"), seen)
-    assert is_duplicate(p("Different title", url="https://example.com/bnp/107441"), seen)
-    assert not is_duplicate(p("2027 Sales, Trading and Structuring Graduate Programme"), seen)
+    assert is_duplicate(make_posting(employer="BNP Paribas", title="London - 2027 Global Markets Graduate Analyst - Trading"), seen)
+    assert is_duplicate(make_posting(employer="Anyone", title="Different title", url="https://example.com/bnp/107441"), seen)
+    assert not is_duplicate(make_posting(employer="Cboe Europe", title="London - 2027 Global Markets Graduate Analyst - Trading"), seen)

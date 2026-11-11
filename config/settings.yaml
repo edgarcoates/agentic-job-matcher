@@ -3,11 +3,22 @@ backend: api                     # "api" (ANTHROPIC_API_KEY) or "claude_cli" (yo
 source: live                     # "live" = real postings via web search; "files" = postings saved in postings_dir
 postings_dir: postings/practice  # used when source is "files"; practice/ is the fictional test set for the eval
 models:
-  leader: claude-opus-5-5
-  research: claude-haiku-5-5       # picks and extracts postings from files
-  research_live: claude-sonnet-5-5 # web search + reading real careers pages needs more judgement
+  leader: claude-opus-5-5          # few calls (plan + eligible candidates only), where judgement matters most
+  research: claude-haiku-5-5       # extracting postings from research notes or files
+  research_live: claude-sonnet-5-5 # web search + reading careers pages needs judgement
   verification: claude-haiku-5-5
   alignment: claude-sonnet-5-5
-max_iterations: 4                # hard stop on the loop
-min_reviews: 3                   # review at least this many postings before choosing, so the loop shows its comparisons
+max_iterations: 16               # most candidates reviewed in one run (ineligible ones cost no model calls)
+lanes_per_run: 4                 # lanes searched in parallel each round; the leader rotates through all lanes over runs
+shortlist_per_lane: 3            # postings requested per lane per round
+max_search_rounds: 2             # round 2 adds off-cycle internships, only if no full-time strong match was accepted
+min_reviews: 3                   # review at least this many before stopping on a full-time strong match
+max_posting_age_days: 30         # dated postings older than this are rejected; fresher ones rank higher
+history_file: runs/history.json  # memory across live runs: roles already reviewed are skipped (local, not committed)
+max_parallel_lanes: 3            # lane searches running at once (more caused web-tool timeouts)
+web:                             # limits per lane search (API backend)
+  tool_version: basic            # basic = one search per call; dynamic = model-written filtering code (failed live)
+  max_searches: 8
+  max_fetches: 6
+  max_fetch_tokens: 8000         # cap on each fetched page entering context
 today: null                      # null = system date; set YYYY-MM-DD for reproducible runs

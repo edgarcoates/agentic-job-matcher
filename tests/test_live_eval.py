@@ -25,6 +25,9 @@ EXPECTED = {
     "harcourt-private-banking": {"verified": True, "wanted": False},
     "vantage-quant-researcher": {"verified": True, "attainable": False},
     "northgate-private-credit-ny": {"verified": False},
+    "harbourline-execution-analyst-stale": {"verified": False},
+    "atlas-offcycle-market-data": {"verified": True},
+    "kingsbridge-markets-graduate-scheme": {"verified": True},
 }
 
 
@@ -32,7 +35,7 @@ EXPECTED = {
 def test_full_run_finds_the_designed_match(tmp_path):
     load = lambda n: yaml.safe_load((ROOT / "config" / n).read_text())  # noqa: E731
     settings = load("settings.yaml")
-    settings.update(source="files", max_iterations=4, min_reviews=4)  # review every practice posting
+    settings.update(source="files", max_iterations=len(EXPECTED), min_reviews=len(EXPECTED))  # review every posting
     settings["backend"] = os.environ.get("MATCHER_BACKEND", settings["backend"])
     tracer = Tracer(tmp_path)
     ctx = Context(LLM(make_backend(settings["backend"]), tracer), tracer, load("profile.yaml"),
@@ -45,4 +48,12 @@ def test_full_run_finds_the_designed_match(tmp_path):
     for posting_id, expected_gates in EXPECTED.items():
         for gate, value in expected_gates.items():
             assert by_id[posting_id].gates[gate] is value, f"{posting_id}: gate {gate}"
+    # The new rules, each caught where it was designed to be:
+    assert by_id["harbourline-execution-analyst-stale"].failed_checks == ["posted_recently"]
+    assert by_id["harbourline-execution-analyst-stale"].decided_by == "code"
+    atlas = by_id["atlas-offcycle-market-data"]
+    assert atlas.role_type == "off_cycle_internship"
+    assert any("delay graduation" in w for w in atlas.warnings)
+    assert by_id["kingsbridge-markets-graduate-scheme"].crowding == "mass_scheme"
     assert state["final"].posting_id == "meridian-erates-market-structure"
+    assert state["final"].tier == "strong"

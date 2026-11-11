@@ -1,7 +1,7 @@
 # Graduate Associate, Private Banking (London)
 Employer: Harcourt Wealth Partners (fictional)
 Location: London, UK
-Posted: 2026-09-20
+Posted: 2026-10-05
 Closing date: 2026-11-30
 Start: September 2027
 Employment type: Full-time graduate programme

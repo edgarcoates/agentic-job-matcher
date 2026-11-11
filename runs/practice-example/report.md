@@ -1,53 +1,70 @@
-# Run report `practice-example` (run 20261011-221720)
+# Run report `practice-example` (run 20261109-225127)
 
-- **Backend:** claude_cli  |  **Source:** fixtures
-- **Models:** leader=claude-opus-5-5, research=claude-haiku-5-5, verification=claude-haiku-5-5, alignment=claude-sonnet-5-5
-- **Stopped because:** accepted candidate found after 3 reviews
-- **Model calls:** 17  |  **Tokens:** 706,156 in / 14,975 out  |  **Est. cost:** $0.3964
+- **Backend:** claude_cli  |  **Source:** files
+- **Models:** leader=claude-opus-5-5, research=claude-haiku-5-5, research_live=claude-sonnet-5-5, verification=claude-haiku-5-5, alignment=claude-sonnet-5-5
+- **Stopped because:** full-time role accepted after 3 reviews
+- **Reviewed:** 3 postings in 0 search round(s); 1 rejected by code with no model calls
+- **Model calls:** 15  |  **Web searches:** 0  |  **Tokens:** 712,115 in / 20,079 out  |  **Est. cost:** $0.4790
 
 ## Result
 
-**Graduate Analyst, Electronic Rates & Market Structure (London)**, Meridian Clearing & Markets (London, UK)
+**Graduate Analyst, Electronic Rates & Market Structure (London)**, Meridian Clearing & Markets (London, UK): Full-time
 
-Desirability 24/30, attainability 100%.
+Desirability 23/30, attainability 92%, rank score 25, intake: selective_programme.
 
-> I'm accepting this posting because it passes all three gates. Verified: all seven checks passed. Applications close 2026-11-15 and today is 2026-10-11, the programme is open to 2027 graduates with no experience required, and it is a full-time programme with a named Rates product team and concrete duties. Wanted: I re-added the dimension scores (4+5+4+4+4+3) and they total 24, above the 22 threshold. The role sits in the preferred lane (electronic rates and market structure at a venue) and the posting backs this up: the analyst presents to the product committee from year one and can own a product line within three years. Attainable: all five requirements are met (100%), mostly through the candidate's VenueCo work on Treasury fee capture and market structure, which matches the pricing and fee strategy rotation. The candidate also holds UK citizenship, and Python is only listed as a plus.
+> I'm accepting this role. It passes all three gates. Verification passed every check with no warnings: it was posted 2026-10-06, 5 days before the 2026-10-11 run date; it closes 2026-11-15, 35 days away; it's in London; and the September 2027 start comes after the candidate is available in July 2027, so there's no early-start penalty. It also sits squarely in a preferred lane (a multi-dealer rates venue covering market structure, pricing and API onboarding). Desirability is 23 against a threshold of 22, and the rank score is 25 after a +2 edge bonus. Attainability is 92%, backed by direct VenueCo venue experience (ADV, D2C/D2D, fee capture) and UK citizenship. The seat fits the thesis well: the junior presents to the product committee from year one and is offered a stated path to owning a product line within three years. There are three caveats. First, credibility scored only 3 because Meridian's brand is unverified. Second, intake size isn't stated, so 'selective' is inferred, not confirmed. Third, the scoring has inconsistencies to fix. The 23 is the unweighted sum; with the thesis weights it would be about 27, so the role clears the threshold either way. The crowding note also used a 2026-11-09 run date and said 6 days remained; under the 2026-10-11 run date there are 35 days to apply.
+
+### Next steps
+
+- **Apply:** https://careers.example.com/meridian/graduate-analyst-erates
+- **Deadline:** 2026-11-15
+- **Type:** Full-time (Full-time graduate programme); start 2027-09
+- **Posted:** 2026-10-06 (Posting header states "Posted: 2026-10-06".)
+- **Lead with:**
+  - Graduating in 2027 with a strong quantitative degree (economics, finance, maths or similar) (BSc International Economics & Finance, a leading European university, graduating 2027-06, First-class equivalent; a leading European university Mathematics near-top mark; top-grade Maths (skill: quant_foundations))
+  - Genuine interest in market structure, fixed income and electronic trading (VenueCo CFO Group internship (NY, 2026): US Treasury revenue forecast covering ADV, electronification, D2C/D2D share, fee capture (skill: markets_structure); a global markets bank rates/FX placement (fx_rates_markets))
+  - Strong Excel; Python or SQL a plus (training provided) (Excel/VBA, Bloomberg BMC/BSA/BFF, fixed live client VBA code at VenueCo 2025 (skill: excel_vba))
+  - Clear communicator, comfortable with clients (VenueCo 2025 execution-product pitch deck and product overview used with a large insurer (client_materials); VenueCo 2026 forecast presented to the Group Head of IR; tools presented to the CFO and CAO)
+  - Right to work in the UK (US-UK dual citizen; home location London; no visa sponsorship needed (edge: cross_border))
+- **Address in the application or interview:**
+  - Responsibility: use and extend AI-assisted analytics for liquidity and execution quality (not a listed requirement, but central to the work) [partial]: There is strong applied LLM building experience, but in finance-workflow automation, not liquidity or execution-quality analytics. Python and SQL fluency are still being built, which limits how much the candidate can extend analytics in code at the start.
 
 ## Leader's search brief
 
-- **Target roles:** 2027 Graduate Analyst – Markets (Rates, FX, Credit trading or e-trading/electronic market making), London or New York; 2027 Graduate Analyst – Markets Strats / Desk Strategist (rates, FX, credit; non-C++ strats tracks); Graduate / Analyst – Electronic Trading or Market Structure at market-infrastructure firms (VenueCo, MarketAxess, LSEG/FXall, CME/BrokerTec, ICE, Bloomberg, Euronext/MTS, Cboe); Graduate Product Analyst / Business Analyst – fixed income or FX trading venues (product ownership track); 2027 Graduate Analyst – Event-driven / special situations / macro investing (hedge fund or bank principal desk); 2027 Graduate Analyst – Restructuring advisory (only as a fallback within IB); Graduate Analyst – Digital/energy infrastructure principal investing (selective, only with direct deal decision exposure)
-- **Must-haves:** Start date in summer/autumn 2027 (graduate/new-analyst programme or full-time direct hire); open to candidates graduating June 2027 with 0 years' experience; Located in London or New York (or a London programme with a stated NY rotation or mobility); Seat sits on or right next to a trading/market-making/investing decision: pricing, risk, flow, execution, venue product or principal capital. Not just producing materials; Covers rates, FX, credit, e-trading, market structure or event/macro investing; Technical tooling is valued (Python/SQL/automation/LLM/data) but not required as production-level C++ or quant research; Posting is live and accepting applications as of Oct 2026 (2027 graduate cycle), with an application link and deadline if stated; No visa sponsorship needed: candidate holds US and UK citizenship, so roles in either location are fine
-- **Red flags:** Private banking, wealth management, UHNW advisory or client-advisory associate roles; Generalist private equity, private credit/direct lending, or benchmarked long-only asset management; Conventional M&A/ECM/DCM coverage IB, management consulting, corporate finance/FP&A or Big-4 roles; Back/middle-office operations, reconciliations, KYC/onboarding or controls roles with no path to the desk; Quant researcher/developer roles that need C++, a PhD or shipped production code; Requires 1+ years' experience, or is an internship/off-cycle placement rather than a full-time graduate start; Locations other than London/NY with no mobility, or postings that are expired or closed; Sales-only roles with no product or market depth, or pure 'data entry' analyst titles
+- **Target roles:** Graduate / Analyst (2027 start) in market structure, product or business development at a trading venue, exchange or market-data firm (fixed income, FX or rates venues preferred), London; Electronic trading / e-commerce analyst in Markets: rates, FX or credit e-trading desks, London (2027 full-time); Markets strats / desk analyst (non-C++) in rates, FX or credit at a bank or dealer that hires small, desk-specific cohorts, London; Junior execution trader / trading analyst / trading assistant at a hedge fund or buy-side dealing desk (fixed income, FX or multi-asset), London; Portfolio analytics / risk and performance analyst at a hedge fund or multi-strategy platform, London; Junior analyst in special situations, event-driven or global macro at a hedge fund (direct-hire analyst seat, not an operations rotation), London; Commodity / power trading analyst at a utility or energy trading house (gas, power, carbon), London; Applied AI / data analyst sitting on a markets, trading or venue business (not a central IT pool), London; Secondary: the same seats in New York, only where fit is unusually close (e.g. FI venue market structure or US Treasury e-trading); Fallback only if no full-time role surfaces: 2027 off-cycle internships in the same lanes, London
+- **Target employers:** VenueCo (London: EU/UK rates & credit, market structure, execution-product/automation product; leverage the internship relationship); MarketAxess (London: Open Trading, credit e-trading, data/analytics; CP+); LSEG (FX venues FXall/Matching, VenueCo parent, Data & Analytics, Post Trade/LCH SwapClear); ICE / ICE Futures Europe and ICE Data Services (London); Cboe Europe and Cboe FX (London); Euronext / MTS (London-a European city: European government bond venue; a leading European university network fit); Bloomberg (Fixed Income & FX trading solutions, product/market-structure analyst, not mass sales intake); Aquis, Turquoise, BrokerTec/CME Group London, Eurex London, TP ICAP (Liquidnet, Parameta Solutions); Virtu ITG / Liquidnet analytics, Trading Technologies, OpenGamma, Clarus Financial Technology (smaller market-structure firms); XTX Markets, Jump Trading, Optiver, Flow Traders (non-C++ trading/operations-analyst or market-structure seats only); Banks' e-trading/strats desks hiring directly or in small cohorts: Jefferies, Mizuho, Nomura, RBC Capital Markets, Natixis CIB, Société Générale, Lloyds Banking Group Markets, NatWest Markets, a global markets bank (existing placement link), Santander CIB; Hedge funds & multi-strats with London analyst or trading-assistant seats: Brevan Howard, Rokos Capital, Capula, Caxton, Lansdowne, Marshall Wace, Man Group (Man GLG, Man Numeric trading), Millennium/Balyasny/Citadel London execution & risk, Eisler Capital, Kirkoswald, Alphadyne; Event-driven / special-sits funds in London: Sona Asset Management, Polus Capital, Arini, Davidson Kempner London, Elliott London (rare analyst seats); Commodity / energy: Centrica Energy Trading, RWE Supply & Trading, Uniper, Engie GEMS, Ørsted, Statkraft, Vitol, Trafigura, Gunvor, Mercuria (selective analyst seats, not mass rotations)
+- **Must-haves:** Location: London (New York only if the fit is unusually close; flag it and remember the non-home threshold is +3); Entry-level: 0 years of experience required; graduates with 2027 degrees eligible; start date on or after July 2027 (start dates earlier than ~mid-2027 incur the early-start penalty; note the date); Full-time permanent analyst/associate role first; off-cycle internships only as a labelled fallback; Seat is in a preferred lane: venue/market infrastructure/market data, Markets e-trading/strats in rates/FX/credit, buy-side trading/execution/portfolio analytics, event-driven/special-sits/macro, or selective commodity/power trading; Posting went live recently: on or after 2026-09-11 (30 days before the 2026-10-11 run date); record the posting date and the live/open status for each result; Junior makes or directly informs decisions with fast feedback (desk-facing, trading, product or PM-adjacent), not back-office processing; At least one of the candidate's edges counts directly: FI/FX market-structure knowledge, applied LLM/automation building, portfolio construction leadership, or US-UK work authorisation; Python/SQL listed as 'desirable' or 'will train', not as a hard prerequisite with a production-code expectation; Capture for each result: employer, team, title, location, posting URL, posting date, start date, closing date, cohort size if stated
+- **Red flags:** Private banking, wealth management or UHNW advisory roles; Generalist PE, private credit origination, long-only benchmarked asset management research, conventional IB M&A/ECM/DCM coverage (restructuring OK), consulting or generic corporate finance/FP&A; Mass graduate programmes with large rotational intakes and no desk choice (crowding penalty -3); prefer named-desk or direct-hire seats; Roles requiring C++, a PhD, formal quant research or shipped production Python/SQL code; Roles requiring 1+ years of experience, or 'experienced hire' postings disguised as analyst roles; Postings dated before 2026-09-11, with closed applications, or evergreen/talent-pool pages with no live requisition; Start dates before July 2027 (candidate graduates June 2027); Pure operations, middle-office reconciliation, KYC processing or data-entry seats that AI is compressing (no decision rights); Sales-only seats with no market/product content, or commission-only/retail brokerage roles; Locations outside London/New York (e.g. Dublin, Paris, Amsterdam, Warsaw or Bangalore hubs for London-branded firms); Recruiter spam, unnamed 'leading hedge fund' listings without a verifiable employer, or fee-charging programmes
 
 ## Iterations
 
-| # | Posting | Verified | Wanted | Attainable | Verdict |
-|---|---|---|---|---|---|
-| 1 | Meridian Clearing & Markets: Graduate Analyst, Electronic Rates & Market Structure (London) | pass | pass | pass | ACCEPT |
-| 2 | Vantage Quantitative Trading: Junior Quantitative Researcher, Rates Market Making (London) | pass | pass | **FAIL** | REJECT |
-| 3 | Northgate Capital Partners: Analyst, Direct Lending (New York) | **FAIL** | not run | not run | REJECT |
+| # | Posting | Type | Posted | Verified | Wanted | Attainable | Verdict |
+|---|---|---|---|---|---|---|---|
+| 1 | Meridian Clearing & Markets: Graduate Analyst, Electronic Rates & Market Structure (London) | Full-time | 2026-10-06 | pass | pass | pass | ACCEPT |
+| 2 | Harbourline Asset Management (fictional): Graduate Execution Analyst, Fixed Income Trading (London) | Full-time | 2026-08-28 | **FAIL** (posted_recently) | not run | not run | REJECT by code |
+| 3 | Kingsbridge Bank: Global Markets Graduate Programme 2027 (London) | Full-time | 2026-10-09 | pass | **FAIL** | pass | REJECT |
 
 ### Iteration 1: Meridian Clearing & Markets, Graduate Analyst, Electronic Rates & Market Structure (London)
 
-**Leader:** I'm accepting this posting because it passes all three gates. Verified: all seven checks passed. Applications close 2026-11-15 and today is 2026-10-11, the programme is open to 2027 graduates with no experience required, and it is a full-time programme with a named Rates product team and concrete duties. Wanted: I re-added the dimension scores (4+5+4+4+4+3) and they total 24, above the 22 threshold. The role sits in the preferred lane (electronic rates and market structure at a venue) and the posting backs this up: the analyst presents to the product committee from year one and can own a product line within three years. Attainable: all five requirements are met (100%), mostly through the candidate's VenueCo work on Treasury fee capture and market structure, which matches the pricing and fee strategy rotation. The candidate also holds UK citizenship, and Python is only listed as a plus.
+**Leader:** I'm accepting this role. It passes all three gates. Verification passed every check with no warnings: it was posted 2026-10-06, 5 days before the 2026-10-11 run date; it closes 2026-11-15, 35 days away; it's in London; and the September 2027 start comes after the candidate is available in July 2027, so there's no early-start penalty. It also sits squarely in a preferred lane (a multi-dealer rates venue covering market structure, pricing and API onboarding). Desirability is 23 against a threshold of 22, and the rank score is 25 after a +2 edge bonus. Attainability is 92%, backed by direct VenueCo venue experience (ADV, D2C/D2D, fee capture) and UK citizenship. The seat fits the thesis well: the junior presents to the product committee from year one and is offered a stated path to owning a product line within three years. There are three caveats. First, credibility scored only 3 because Meridian's brand is unverified. Second, intake size isn't stated, so 'selective' is inferred, not confirmed. Third, the scoring has inconsistencies to fix. The 23 is the unweighted sum; with the thesis weights it would be about 27, so the role clears the threshold either way. The crowding note also used a 2026-11-09 run date and said 6 days remained; under the 2026-10-11 run date there are 35 days to apply.
 
-**Feedback to research:** Two dimensions held this posting back: US portability (3) and the fact that this is a venue product seat rather than a trading seat. Next time, favour postings that name a New York office or transfer route, or bank e-trading and strats seats where the junior has risk or P&L decision rights. When a posting is ambiguous, check how much weight junior recommendations actually carry, for example whether committee decisions are reported back to the analyst who made the recommendation.
+**Feedback to research:** Please make the scorer apply the thesis weights (1.5x for decision_rights and learning_density) and the 2026-10-11 run date consistently, because mismatched totals and dates make the threshold comparisons hard to trust. For the next shortlist, look for postings that state intake size, and favour employers whose brand you can show is recognised (for example, rates venues or bank e-trading desks with a known name), so that credibility and crowding are backed by evidence rather than inferred.
 
-Desirability 24/30; attainability 100%.
+Desirability 23/30; attainability 92%; rank score 25; intake selective_programme.
 
-### Iteration 2: Vantage Quantitative Trading, Junior Quantitative Researcher, Rates Market Making (London)
+### Iteration 2: Harbourline Asset Management (fictional), Graduate Execution Analyst, Fixed Income Trading (London)
 
-**Leader:** The posting passed verification. It is a full-time, permanent role open to 2027 graduates, with rolling applications and a London location. It is also wanted: it scores 23 against a threshold of 22 and sits in the preferred electronic rates market-making lane. The problem is attainability, which alignment puts at 12% (LOW). Three of the four requirements are missing outright: a PhD, production-quality C++ and Python, and deep knowledge of stochastic calculus and time-series econometrics. The fourth, published research or competitive programming, is only partly met through national maths olympiad. The candidate is a a leading European university BSc Economics & Finance student, so the PhD gap is a hard degree-level barrier that strong maths grades cannot make up for.
+**Code:** Rejected by code before scoring: posted_recently: posted 2026-08-28 (44 days ago; limit 7). Source: Posting states "Posted: 2026-08-28".
 
-**Feedback to research:** Keep targeting electronic rates and FX markets, but screen out postings that require a PhD, deep stochastic calculus or production C++. Look instead for undergraduate graduate-programme seats such as bank Markets e-trading analyst, desk strats, trading analyst at a market maker, or market-structure roles at exchanges and venues. These should accept a BSc in Economics or Finance, value the candidate's maths and market-structure knowledge, and treat Python as something to build on the job rather than a requirement on day one.
+**Feedback to research:** Avoid roles like Harbourline Asset Management (fictional) 'Graduate Execution Analyst, Fixed Income Trading (London)', which failed posted_recently.
 
-Desirability 23/30; attainability 12%.
+### Iteration 3: Kingsbridge Bank, Global Markets Graduate Programme 2027 (London)
 
-### Iteration 3: Northgate Capital Partners, Analyst, Direct Lending (New York)
+**Leader:** The posting passes every verification check against the 2026-10-11 run date. It went up on 2026-10-09 with rolling applications, starts in September 2027 (after the candidate is available from 2027-07, so no early-start penalty), is in London (the home city) and is fully attainable (100%: likely First, UK citizen, strong markets evidence). It is still not wanted: desirability is 13 against a threshold of 22, and the rank score is 11 after the −3 crowding penalty and +1 edge bonus. Note that the dimension scores actually weight to 15, not 13, which the scorer should reconcile, but either figure is far below the bar. Bank Markets is a preferred lane, but this is the mass intake the thesis ranks lower: about 350 graduates a year across 30 countries, any discipline, with an unspecified final placement that could be sales. The posting offers no early decision rights (1/5), no ownership path (1/5) and nothing that uses the candidate's AI-builder or portfolio-leadership edges.
 
-**Leader:** This posting fails all three gates. It is not verified because the closing date (2026-09-30) passed before today (2026-10-11). It is not attainable because it asks for "2+ years of investment banking or leveraged finance experience" and the candidate has none, so the entry_level and experience checks both failed. It is also not wanted: middle-market direct lending is private credit, which the thesis excludes as a cycle bet, and the seat is mostly memo writing and covenant monitoring rather than repeated market decisions.
+**Feedback to research:** Stop shortlisting broad rotational bank graduate schemes. Look instead for selective direct-entry seats: e-trading or strats analyst roles, rates or FX desks with small intakes, venue or market-data firms (VenueCo-style), and buy-side execution or portfolio-analytics roles that name technical or AI tooling and early risk or decision responsibility. Those are where the candidate's market-structure and applied-AI edges score as strong matches. Also ask the alignment agent to check that its weighted dimension total matches the desirability it reports: here 1.5×1 + 1.5×3 + 2 + 3 + 1 + 3 = 15, but it reported 13.
 
-**Feedback to research:** Before scoring a posting, drop any with a past closing date or min_years_experience > 0, and drop private credit, direct lending and other excluded lanes. Look instead for 2027 graduate or analyst programmes in bank Markets (rates, FX, credit, e-trading, strats) or at market-infrastructure firms in London or New York.
+Desirability 13/30; attainability 100%; rank score 11; intake mass_scheme.
 
 ## Graph
 
@@ -64,21 +81,25 @@ graph TD;
 	verify(verify)
 	align(align)
 	review(review)
+	reject(reject)
 	finalize(finalize)
 	__end__([<p>__end__</p>]):::last
 	__start__ --> plan;
 	align --> review;
 	plan --> research;
+	reject -.-> finalize;
+	reject -.-> research;
 	research -.-> finalize;
 	research -.-> verify;
 	review -.-> finalize;
 	review -.-> research;
 	verify -.-> align;
-	verify -.-> review;
+	verify -.-> reject;
 	finalize --> __end__;
+	research -.-> research;
 	classDef default fill:#f2f0ff,line-height:1.2
 	classDef first fill-opacity:0
 	classDef last fill:#bfb6fc
 ```
 
-Full step-by-step evidence (every check, score and model output) is in `trace.jsonl`.
+Full step-by-step evidence (every check, score, adjustment and model output) is in `trace.jsonl`.

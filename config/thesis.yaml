@@ -1,30 +1,72 @@
-# Market thesis: the assumption set that decides whether a role is *wanted*.
-# Summarised from the career-direction memo.
+# Market thesis and preferences: what decides whether a role is *wanted*.
+# Summarised from the career-direction memo, updated with the candidate's latest instructions (which take priority).
 statement: >
   AI is compressing junior structured knowledge work. Career capital now compounds in seats that give
   repeated decisions, systems knowledge of how markets work, technical leverage, trusted relationships
-  and a path to ownership. Financial-market infrastructure, e-trading and strong bank Markets seats
-  are the best entry point.
+  and a path to ownership. Start in London with credibility: a recognised name helps later moves
+  (business school, CFA-track roles), but early responsibility and learning density matter more than
+  brand. Large, crowded graduate intakes are ranked lower than selective seats where the candidate's
+  edges count. Any lane above can work; the right seat inside it matters more than the label.
 
-preferred_lanes:
-  - Financial-market infrastructure / electronic markets / market structure
-  - Bank Markets seats in rates, FX, credit, e-trading or strats
-  - Discretionary catalyst investing (special situations, event-driven, macro)
-  - Digital / power infrastructure principal investing (selective)
+# Lanes the search rotates through. Each run, the leader picks the most promising few (balancing what the candidate
+# wants with what they can realistically get), preferring lanes not searched recently.
+lanes:
+  hedge_funds: Hedge funds - junior analyst roles at multi-strategy, macro, event-driven or long/short funds
+  asset_management: Asset management - investment analyst or graduate roles, including active and multi-asset teams
+  pe_secondaries: Private equity and secondaries - analyst roles, including secondaries specialists buying fund stakes
+  wealth_management: Wealth management - investment, portfolio or client roles at wealth managers and private banks
+  exchanges_venues: Exchanges, trading venues and clearing houses (e.g. LSE Group, Cboe, ICE, Euronext)
+  frontier_infrastructure: Frontier market infrastructure (e.g. Kalshi) - tech-led, high-margin venues, prediction markets, digital-asset and tokenisation platforms
+  fintech_ai: Fintech companies building AI products for finance - analyst, solutions or client roles
+  research: Investment research - equity, credit or macro research analyst roles (sell-side, independent or buy-side)
+  corporate_venture: Corporate venture and strategic investment teams at financial firms
+  market_data: Market data and analytics firms (e.g. Bloomberg, LSEG Data & Analytics, MSCI)
+  energy_commodities: Energy and commodity trading houses and desks, including power and data-centre infrastructure
 
-excluded_lanes:                  # lanes the memo explicitly cuts
-  - Private banking / UHNW advisory
-  - Generalist private equity as an identity
+# Seat types the candidate wants within those lanes; other seat types rank lower (see preferences).
+preferred_seat_types: [investing_analysis, client_facing]
+
+excluded_lanes:                  # still cut (the candidate lifted the memo's other exclusions for their lanes)
+  - Conventional investment banking (M&A/ECM/DCM coverage), consulting and generic corporate finance
   - Private credit as a cycle bet
-  - Benchmarked long-only asset management
-  - Conventional IB (except restructuring), consulting, generic corporate finance
 
-# Six-factor rubric, each scored 0-5. Accept threshold 22/30.
+# Only these employers' graduate schemes count as crowded (rank penalty, applied in code). Other graduate
+# programmes, e.g. at exchanges, are not penalised.
+crowded_employers: [Goldman Sachs, J.P. Morgan, JPMorgan, Morgan Stanley, Bank of America, BofA, Citi, Barclays,
+                    Deutsche Bank, UBS, HSBC, BNP Paribas]
+
+excluded_employers: [VenueCo]   # enforced in code. Firms *like* it (frontier, high-margin market infrastructure) are wanted
+
+# Six-factor rubric, each scored 0-5 by the alignment agent, with evidence.
 rubric:
-  decision_rights: Does the junior make or directly inform decisions with feedback (not just produce analysis)?
-  learning_density: How fast does the seat build market/systems knowledge?
+  decision_rights: Does the junior get responsibility early, making or directly informing decisions with feedback?
+  learning_density: How fast does the seat build relevant market and systems skills?
   ai_complementarity: Does AI make this person more valuable here, not replace the work?
   relationship_capital: Does the seat build trust with clients, counterparties and senior people?
   ownership_path: Is there a credible path to P&L, carry, equity or product ownership?
-  us_portability: Does the skill set transfer to a New York seat later?
-accept_threshold: 22
+  credibility: Is the employer and role a recognised, respected signal for later moves (business school, CFA-track roles, New York)?
+
+# Weights applied in code. Learning and early responsibility count for more than brand. The weighted total is
+# scaled back to 0-30, so the threshold keeps its meaning.
+weights:
+  decision_rights: 1.5
+  learning_density: 1.5
+  ai_complementarity: 1.0
+  relationship_capital: 1.0
+  ownership_path: 1.0
+  credibility: 1.0
+accept_threshold: 22              # "strong match" (US cities +1); "worth applying" is this minus worth_applying_margin
+
+# Adjustments applied in code, each shown in the report.
+preferences:
+  early_start_penalty: 2         # desirability points off a role starting before availability (delays graduation)
+  non_home_threshold_bonus: 1    # roles in US cities must clear 23/30 instead of 22/30
+  non_eastern_rank_penalty: 1    # US cities outside Eastern time rank 1 lower (ranking only)
+  crowding_penalty: 2            # mass graduate intakes rank lower (ranking only, never a rejection)
+  edge_bonus_cap: 3              # up to +3 rank for roles that reward the candidate's edges (+1 strong, +0.5 some)
+  worth_applying_margin: 3       # second tier: 19+ in London, 20+ in US cities
+  fresh_7d_bonus: 2              # rank bonus for postings that went live in the last 7 days
+  fresh_14d_bonus: 1             # ... or in the last 14 days (postings over 30 days old are rejected in code)
+  off_preference_seat_penalty: 2 # rank penalty for seats outside preferred_seat_types
+  want_weight: 0.5               # rank = want_weight x desirability + get_weight x attainability (both on 0-30),
+  get_weight: 0.5                #   plus the adjustments above

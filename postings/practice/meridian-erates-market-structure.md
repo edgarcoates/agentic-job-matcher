@@ -1,7 +1,7 @@
 # Graduate Analyst, Electronic Rates & Market Structure (London)
 Employer: Meridian Clearing & Markets (fictional)
 Location: London, UK
-Posted: 2026-10-02
+Posted: 2026-10-06
 Closing date: 2026-11-15
 Start: September 2027
 Employment type: Full-time graduate programme

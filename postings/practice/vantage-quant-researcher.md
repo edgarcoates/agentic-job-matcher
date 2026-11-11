@@ -1,7 +1,7 @@
 # Junior Quantitative Researcher, Rates Market Making (London)
 Employer: Vantage Quantitative Trading (fictional)
 Location: London, UK
-Posted: 2026-10-01
+Posted: 2026-10-07
 Closing date: rolling
 Start: 2027
 Employment type: Full-time, permanent

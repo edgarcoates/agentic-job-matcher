@@ -16,20 +16,34 @@ Dimension = Literal[
     "ai_complementarity",
     "relationship_capital",
     "ownership_path",
-    "us_portability",
+    "credibility",
 ]
 DIMENSIONS: tuple[str, ...] = Dimension.__args__  # type: ignore[attr-defined]
+
+RoleType = Literal["full_time", "off_cycle_internship", "summer_internship", "other"]
+SeatType = Literal["investing_analysis", "client_facing", "product_strategy", "quant_data", "operations", "other"]
+Tier = Literal["strong", "worth_applying", "below"]
+Crowding = Literal["mass_scheme", "selective_programme", "small_team_hire", "unknown"]
 
 
 # Leader -------------------------------------------------------------------------------------------
 
-class SearchBrief(BaseModel):
-    """The leader's plan: what the research agent should look for, derived from thesis + profile."""
+class LanePlan(BaseModel):
+    """One lane chosen for this run: why now, and how the research agent should search it."""
 
+    lane_id: str  # a key from thesis.lanes
+    rationale: str  # balance of desirability and achievability for this candidate
     target_roles: list[str]
+    target_employers: list[str]  # credible but less crowded names where the candidate's edges count
+    search_queries: list[str]
+
+
+class SearchBrief(BaseModel):
+    """The leader's plan: which lanes to search this run, and what every candidate must satisfy."""
+
+    lanes: list[LanePlan]
     must_haves: list[str]
     red_flags: list[str]
-    search_queries: list[str]
 
 
 class LeaderReview(BaseModel):
@@ -51,9 +65,17 @@ class Decision(BaseModel):
     gates: dict[str, bool]
     rationale: str
     feedback: str
+    decided_by: Literal["leader", "code"] = "leader"  # code rejects roles that fail eligibility, at no model cost
+    lane: str | None = None
+    tier: Tier | None = None
     leader_overridden: bool = False
+    role_type: RoleType = "other"
     desirability: int | None = None
     attainability_pct: int | None = None
+    rank_score: float | None = None
+    crowding: Crowding | None = None
+    failed_checks: list[str] = []
+    warnings: list[str] = []
     strengths: list[str] = []  # requirements met, with the CV evidence behind them
     gaps: list[str] = []  # requirements partly met or missing
 
@@ -72,14 +94,26 @@ class JobPosting(BaseModel):
     employer: str
     location: str
     url: str | None
-    employment_type: str | None  # e.g. "Full-time graduate programme", "Internship"; null if not stated
+    role_type: RoleType
+    seat_type: SeatType  # what the junior mainly does day to day
+    employment_type: str | None  # the posting's own wording, e.g. "Full-time graduate programme"
     application_route: str | None  # how to apply (URL, portal, email); null if not stated
+    start_date: str | None  # YYYY-MM if it can be pinned down, else null
+    start_text: str | None  # the posting's own wording about the start, e.g. "Spring 2027, 6 months"
+    posted_date: str | None  # YYYY-MM-DD when the posting went live, if any source gives it
+    posted_evidence: str | None  # where the posted date or recency clue came from
     closing_date: str | None  # YYYY-MM-DD, or null if rolling / not stated
     min_years_experience: int | None  # null if not stated
     graduation_years_eligible: list[int]  # empty if not stated
     responsibilities: list[str]
     requirements: list[str]
     summary: str
+
+
+class PostingBatch(BaseModel):
+    """One web-research round returns a shortlist, so a single search serves several loop iterations."""
+
+    postings: list[JobPosting]
 
 
 # Role verification --------------------------------------------------------------------------------
@@ -99,11 +133,20 @@ class Check(BaseModel):
     passed: bool
     evidence: str
     source: Literal["rule", "llm"]
+    warning: str | None = None  # passed, but something the candidate should confirm
 
 
 class VerificationResult(BaseModel):
     passed: bool
     checks: list[Check]
+
+    @property
+    def failed(self) -> list[str]:
+        return [c.name for c in self.checks if not c.passed]
+
+    @property
+    def warnings(self) -> list[str]:
+        return [c.warning for c in self.checks if c.warning]
 
 
 # Alignment ----------------------------------------------------------------------------------------
@@ -128,18 +171,41 @@ class RequirementMatch(BaseModel):
     reasoning: str
 
 
+class EdgeMatch(BaseModel):
+    edge_id: str  # an edge id from the profile
+    strength: Literal["strong", "some", "none"]
+    posting_evidence: str
+
+
 class AttainabilityAssessment(BaseModel):
     requirements: list[RequirementMatch]
+    crowding: Crowding
+    crowding_evidence: str
+    edge_matches: list[EdgeMatch]
+
+
+class Adjustment(BaseModel):
+    name: str
+    points: float
+    reason: str
 
 
 class AlignmentResult(BaseModel):
-    """Both lenses combined. The totals and labels are computed in Python, not by the model."""
+    """Both lenses combined. Every total, threshold, adjustment and label is computed in Python, not by the model."""
 
-    desirability: int
-    desirability_threshold: int
+    desirability_raw: int  # weighted rubric, scaled to 30
+    desirability: int  # after the start-timing adjustment
+    desirability_threshold: int  # "strong match" bar, after the location adjustment
+    worth_applying_threshold: int  # second-tier bar
+    tier: Tier
     in_excluded_lane: bool
     lane_reasoning: str
     dimensions: list[DimensionScore]
     attainability_pct: int
     attainability: Literal["HIGH", "MEDIUM", "LOW"]
     requirements: list[RequirementMatch]
+    crowding: Crowding
+    crowding_evidence: str
+    edge_matches: list[EdgeMatch]
+    adjustments: list[Adjustment]
+    rank_score: float  # used to order accepted roles and near-misses
